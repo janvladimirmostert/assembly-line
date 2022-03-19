@@ -15,6 +15,8 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation(project(":modules:operation"))
+				val coroutinesVersion = "1.6.0"
+				implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 			}
 		}
 		val jvmTest by getting {
