@@ -4,7 +4,7 @@ rootProject.name = "assembly-line"
 include("applications:assembly-line")
 
 // modules
-include("modules:assembly-utils")
+include("modules:operation")
 
 pluginManagement {
 	repositories {

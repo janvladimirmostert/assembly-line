@@ -1,5 +1,4 @@
 plugins {
-	application
 	kotlin("multiplatform")
 }
 
@@ -14,7 +13,7 @@ kotlin {
 	sourceSets {
 		val jvmMain by getting {
 			dependencies {
-				implementation(project(":modules:operation"))
+
 			}
 		}
 		val jvmTest by getting {
@@ -24,8 +23,3 @@ kotlin {
 		}
 	}
 }
-
-application {
-	mainClassName = "com.assembly.Demo"
-}
-
