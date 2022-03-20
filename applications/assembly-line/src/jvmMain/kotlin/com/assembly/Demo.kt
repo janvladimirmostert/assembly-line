@@ -1,11 +1,9 @@
 package com.assembly
 
 import com.assembly.entity.AssemblyCarEntity
+import com.assembly.line.TeslaCybertruckAssemblyLine
 import com.assembly.operation.Activity
-import com.assembly.processes.AssemblyInterior
-import com.assembly.processes.AssemblyMechanich
-import com.assembly.processes.Build
-import com.assembly.processes.Paint
+import com.assembly.process.*
 import kotlinx.coroutines.delay
 
 
@@ -28,21 +26,26 @@ class AssemblyLine(
 ) {
 
 	suspend fun produce(e: AssemblyCarEntity) {
-		this.activity.forEach { activity ->
-
+		this.activity.filter { it !is QualityCheck }.forEach { activity ->
 			println(activity::class)
-			println(activity is AssemblyCarEntity)
-
 			activity.execute()
 		}
-
+		this.activity.filterIsInstance<QualityCheck>().forEach { activity ->
+			println(activity as QualityCheck)
+			activity.execute()
+		}
 	}
 }
 
 
 suspend fun main(args: Array<String>) {
 
+	val recall =
+
 	AssemblyLine(
+		QualityCheck {
+			println("checking car quality ")
+		},
 		Paint {
 			delay(100)
 			println("painting")
@@ -56,15 +59,19 @@ suspend fun main(args: Array<String>) {
 		AssemblyMechanich {
 			println("assembling mechanic")
 		},
-		AssemblyInterior {
-			println("assembling interior")
-		},
+
 		Build {
 			delay(21)
 			println("building")
 			delay(44)
-		}
+		},
+		AssemblyInterior {
+			println("assembling interior")
+		},
+
 	).produce(AssemblyCarEntityIml())
+
+	TeslaCybertruckAssemblyLine().produce(AssemblyCarEntityIml())
 
 
 }

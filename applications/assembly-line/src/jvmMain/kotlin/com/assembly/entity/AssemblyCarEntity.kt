@@ -1,7 +1,7 @@
 package com.assembly.entity
 
-import com.assembly.processes.Build
-import com.assembly.processes.Paint
+import com.assembly.process.Build
+import com.assembly.process.Paint
 
 interface AssemblyCarEntity : Paint, Build {
 
