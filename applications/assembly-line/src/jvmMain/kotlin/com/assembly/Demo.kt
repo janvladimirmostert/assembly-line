@@ -24,8 +24,6 @@ class AssemblyCarEntityIml : AssemblyCarEntity {
 	override suspend fun build() {
 		log.info("building!!!")
 	}
-
-
 }
 
 

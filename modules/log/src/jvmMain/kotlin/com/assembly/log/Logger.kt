@@ -34,18 +34,23 @@ class Logger(val name: String) {
 	fun trace(text: Any?) {
 		systemLogger.log(System.Logger.Level.TRACE, text ?: "")
 	}
+
 	fun debug(text: Any?) {
 		systemLogger.log(System.Logger.Level.DEBUG, text ?: "")
 	}
+
 	fun info(text: Any?) {
 		systemLogger.log(System.Logger.Level.INFO, text ?: "")
 	}
+
 	fun warn(text: Any?) {
 		systemLogger.log(System.Logger.Level.WARNING, text ?: "")
 	}
+
 	fun error(text: String?) {
 		systemLogger.log(System.Logger.Level.ERROR, text ?: "")
 	}
+
 	fun error(error: Throwable?) {
 		if (error?.message != null) {
 			systemLogger.log(System.Logger.Level.ERROR, error.message, error)
@@ -53,6 +58,7 @@ class Logger(val name: String) {
 			systemLogger.log(System.Logger.Level.ERROR, error)
 		}
 	}
+
 	fun error(text: Any?, error: Throwable?) {
 		systemLogger.log(System.Logger.Level.ERROR, text?.toString() ?: "", error)
 	}

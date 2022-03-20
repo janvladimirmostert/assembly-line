@@ -1,6 +1,5 @@
 package com.assembly.log
 
-import com.assembly.console.colour.COLOUR
 import com.assembly.console.colour.COLOUR.*
 import com.assembly.console.colour.toColour
 import java.time.LocalDateTime
@@ -13,11 +12,11 @@ class DefaultConsoleLogger(name: String) : System.Logger {
 	private val internalName = name
 
 	companion object {
-		fun logNow(
+		private fun logNow(
 			loggerName: String,
 			level: System.Logger.Level,
 			text: String,
-			throwable: Throwable? = null
+			throwable: Throwable? = null,
 		) {
 
 			val levelCode = when (level) {
