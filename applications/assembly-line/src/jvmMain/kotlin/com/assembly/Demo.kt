@@ -1,6 +1,5 @@
 package com.assembly
 
-import com.assembly.console.colour.COLOUR
 import com.assembly.console.colour.COLOUR.ANSI_GREEN
 import com.assembly.console.colour.toColour
 import com.assembly.log.getLogger
@@ -44,37 +43,75 @@ import kotlinx.coroutines.sync.Mutex
 //	}
 //}
 //
-class AssemblyLine<I>(
-	private val initialValue: I,
+
+
+class AssemblyLine<T>(
+	private val initialValue: T,
 ) {
 
 	private val mutex = Mutex()
 	private var maxPosition: Int = 0
-	private val stations = mutableListOf<Station<*, *>>()
-
-	suspend operator fun <O> plus(station: Station<I, O>): AssemblyLine<O> {
-		mutex.lock {
-			if (station.position == null) {
-				maxPosition++
-				stations.add(
-					Station(
-						position = maxPosition,
-						handler = station.handler
-					)
-				)
-			} else {
-				if (station.position > maxPosition) {
-					maxPosition = station.position
-				}
-				stations.add(station)
-			}
+	private val internalStations = mutableListOf<Station<*, *>>()
+	val stations: List<Station<*, *>>
+		get() {
+			val positiveIndexedStations = internalStations.filter {
+				(it.position ?: 0) >= 0
+			}.sortedBy {
+				it.position
+			}.toTypedArray()
+			val negativeIndexStations = internalStations.filter {
+				(it.position ?: 0) < 0
+			}.sortedBy {
+				it.position
+			}.reversed().toTypedArray()
+			return listOf(*positiveIndexedStations, *negativeIndexStations)
 		}
 
-		return AssemblyLine(station.handler(initialValue))
+	suspend operator fun <O> plus(station: Station<T, O>): Station<T, O> {
+		return add(station)
 	}
+
+	override fun toString(): String {
+		return this.stations.joinToString(", ") { it.toString() }
+	}
+
+	fun <O, R> add(station: Station<O, R>): Station<O, R> {
+		val newStation = Station(
+			name = station.name,
+			position = station.position.let { stationPosition ->
+				val pos = stationPosition ?: 0
+				if (pos > maxPosition) {
+					maxPosition = pos
+				}
+				++maxPosition
+			},
+			handler = station.handler,
+			partOf = this
+		)
+		internalStations.add(newStation)
+		return newStation
+	}
+
 }
 
-class Station<I,O>(val position: Int? = null, val handler: I.() -> O) {
+class Station<I, O>(
+	val name: String,
+	val position: Int? = null,
+	val partOf: AssemblyLine<*>? = null,
+	val handler: I.() -> O,
+) {
+	override fun toString(): String {
+		return "$name:$position"
+	}
+
+	suspend operator fun <R> plus(station: Station<O, R>): Station<O, R> {
+		if (this.partOf == null) {
+			TODO("handle this")
+		}
+		return this.partOf.add(station)
+	}
+
+
 
 }
 
@@ -92,100 +129,25 @@ object Demo {
 		})
 
 		val line = AssemblyLine("")
-		val paint = line + Station(0) {
+		val paint = line + Station(name = "paint", position = 0) {
 			0
 		}
-		val build = paint + Station(1) {
-
+		val build = paint + Station(name = "build") {
+			0.5
 		}
 
-		val qa = build + Station(-1) {
+		val qa = build + Station(name = "qa", position = -1) {
 			0
 		}
 
-		println(qa)
+		val blah = qa + Station(name = "blah") {
+			""
+		}
+
+		println(blah)
+		println(line)
 
 
-
-
-//		line += Station {
-//			123
-//		}
-//		line += Station {
-//		 0.3
-//		}
-//
-//		line += Station(-1) {
-//
-//		}
-//
-//		line.stations.forEach {
-//			println(it.position)
-//		}
-
-
-
-
-
-
-//
-//		val k = Paint<String, Int> {
-//			0
-//		}
-//
-//
-//		line2 += Paint {
-//			""
-//		}
-//
-//
-//		println(line2)
-//
-//
-//
-//
-
-//			.blah {
-//			0
-//		}.blah {
-//			3
-//		}.value
-
-//		println(line2)
-
-
-
-//
-//		AssemblyLine(
-//			QualityCheck {
-//				log.info("checking car quality ")
-//			},
-//			Paint {
-//				delay(100)
-//				log.info("painting")
-//				delay(100)
-//			},
-//			Paint {
-//				delay(100)
-//				log.info("painting again")
-//				delay(100)
-//			},
-//			AssemblyMechanich {
-//				log.info("assembling mechanic")
-//			},
-//
-//			Build {
-//				delay(21)
-//				log.info("building")
-//				delay(44)
-//			},
-//			AssemblyInterior {
-//				log.info("assembling interior")
-//			},
-//
-//			).produce(AssemblyCarEntityIml())
-//
-//		TeslaCybertruckAssemblyLine().produce(AssemblyCarEntityIml())
 
 
 	}
