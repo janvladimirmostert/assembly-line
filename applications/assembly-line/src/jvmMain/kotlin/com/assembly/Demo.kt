@@ -1,11 +1,14 @@
 package com.assembly
 
+import com.assembly.console.colour.COLOUR.ANSI_GREEN
+import com.assembly.console.colour.toColour
 import com.assembly.entity.AssemblyCarEntity
 import com.assembly.line.TeslaCybertruckAssemblyLine
 import com.assembly.log.getLogger
 import com.assembly.operation.Activity
 import com.assembly.process.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 
 class AssemblyCarEntityIml : AssemblyCarEntity {
@@ -46,45 +49,50 @@ class AssemblyLine(
 	}
 }
 
+object Demo {
 
-suspend fun main(args: Array<String>) {
+	private val log = getLogger()
 
-	val log = getLogger()
-	log.debug("BLAH!!")
-	log.info("BLAH!!")
-	log.warn("BLAH!!")
-	log.error("BLAH!!")
+	@JvmStatic
+	fun main(args: Array<String>) = runBlocking {
 
-	AssemblyLine(
-		QualityCheck {
-			log.info("checking car quality ")
-		},
-		Paint {
-			delay(100)
-			log.info("painting")
-			delay(100)
-		},
-		Paint {
-			delay(100)
-			log.info("painting again")
-			delay(100)
-		},
-		AssemblyMechanich {
-			log.info("assembling mechanic")
-		},
+		log.info(javaClass.getResourceAsStream("/art.txt")?.use {
+			String(it.readAllBytes()).toColour(ANSI_GREEN)
+		})
 
-		Build {
-			delay(21)
-			log.info("building")
-			delay(44)
-		},
-		AssemblyInterior {
-			log.info("assembling interior")
-		},
+		AssemblyLine(
+			QualityCheck {
+				log.info("checking car quality ")
+			},
+			Paint {
+				delay(100)
+				log.info("painting")
+				delay(100)
+			},
+			Paint {
+				delay(100)
+				log.info("painting again")
+				delay(100)
+			},
+			AssemblyMechanich {
+				log.info("assembling mechanic")
+			},
 
-	).produce(AssemblyCarEntityIml())
+			Build {
+				delay(21)
+				log.info("building")
+				delay(44)
+			},
+			AssemblyInterior {
+				log.info("assembling interior")
+			},
 
-	TeslaCybertruckAssemblyLine().produce(AssemblyCarEntityIml())
+			).produce(AssemblyCarEntityIml())
 
+		TeslaCybertruckAssemblyLine().produce(AssemblyCarEntityIml())
+
+
+	}
 
 }
+
