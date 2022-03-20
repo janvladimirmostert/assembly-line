@@ -1,0 +1,8 @@
+module com.assembly.log {
+	requires transitive kotlin.stdlib;
+
+	provides java.lang.System.LoggerFinder
+		with com.assembly.log.DefaultLoggerFinder;
+
+	exports com.assembly.log;
+}

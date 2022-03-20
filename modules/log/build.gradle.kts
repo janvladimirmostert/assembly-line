@@ -2,13 +2,13 @@ plugins {
 	kotlin("multiplatform")
 }
 
-
 kotlin {
 
 	jvm {
 		compilations.all {
 			kotlinOptions.jvmTarget = "17"
 		}
+		withJava()
 	}
 	sourceSets {
 		val jvmMain by getting {
