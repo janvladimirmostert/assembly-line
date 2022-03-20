@@ -13,7 +13,7 @@ kotlin {
 	sourceSets {
 		val jvmMain by getting {
 			dependencies {
-				implementation(project(":modules:log"))
+
 			}
 		}
 		val jvmTest by getting {

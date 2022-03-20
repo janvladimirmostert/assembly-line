@@ -2,6 +2,7 @@ package com.assembly
 
 import com.assembly.entity.AssemblyCarEntity
 import com.assembly.line.TeslaCybertruckAssemblyLine
+import com.assembly.log.getLogger
 import com.assembly.operation.Activity
 import com.assembly.process.*
 import kotlinx.coroutines.delay
@@ -9,12 +10,16 @@ import kotlinx.coroutines.delay
 
 class AssemblyCarEntityIml : AssemblyCarEntity {
 
+	companion object {
+		private val log = getLogger()
+	}
+
 	override suspend fun paint() {
-		println("painting!!!")
+		log.info("painting!!!")
 	}
 
 	override suspend fun build() {
-		println("building!!!")
+		log.info("building!!!")
 	}
 
 
@@ -25,13 +30,17 @@ class AssemblyLine(
 	vararg val activity: Activity,
 ) {
 
+	companion object {
+		val log = getLogger()
+	}
+
 	suspend fun produce(e: AssemblyCarEntity) {
 		this.activity.filter { it !is QualityCheck }.forEach { activity ->
-			println(activity::class)
+			log.info(activity::class)
 			activity.execute()
 		}
 		this.activity.filterIsInstance<QualityCheck>().forEach { activity ->
-			println(activity as QualityCheck)
+			log.info(activity as QualityCheck)
 			activity.execute()
 		}
 	}
@@ -40,33 +49,37 @@ class AssemblyLine(
 
 suspend fun main(args: Array<String>) {
 
-	val recall =
+	val log = getLogger()
+	log.debug("BLAH!!")
+	log.info("BLAH!!")
+	log.warn("BLAH!!")
+	log.error("BLAH!!")
 
 	AssemblyLine(
 		QualityCheck {
-			println("checking car quality ")
+			log.info("checking car quality ")
 		},
 		Paint {
 			delay(100)
-			println("painting")
+			log.info("painting")
 			delay(100)
 		},
 		Paint {
 			delay(100)
-			println("painting again")
+			log.info("painting again")
 			delay(100)
 		},
 		AssemblyMechanich {
-			println("assembling mechanic")
+			log.info("assembling mechanic")
 		},
 
 		Build {
 			delay(21)
-			println("building")
+			log.info("building")
 			delay(44)
 		},
 		AssemblyInterior {
-			println("assembling interior")
+			log.info("assembling interior")
 		},
 
 	).produce(AssemblyCarEntityIml())

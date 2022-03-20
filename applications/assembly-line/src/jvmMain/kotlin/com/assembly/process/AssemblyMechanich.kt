@@ -3,8 +3,9 @@ package com.assembly.process
 import com.assembly.operation.Activity
 
 fun interface AssemblyMechanich : Activity {
+
 	override suspend fun execute() {
-		assemblyMechanic()
+		assemblyMechanic(Activity.ActivityState())
 	}
-	suspend fun assemblyMechanic()
+	suspend fun assemblyMechanic(config: Activity.ActivityState)
 }
