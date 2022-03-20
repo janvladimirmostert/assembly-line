@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
 	this.group = "com.assembly"
-	this.version = "1.0.0"
+	this.version = "0.0.1"
 
 	this.repositories {
 		mavenCentral()

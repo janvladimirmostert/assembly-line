@@ -2,7 +2,7 @@ package com.assembly.operation
 
 import com.assembly.log.getLogger
 
-interface Activity {
+interface Activity<I> {
 
 	class ActivityState(
 		var capacity: Int = 0,
@@ -18,5 +18,5 @@ interface Activity {
 		}
 	}
 
-	suspend fun execute()
+	suspend fun <O> execute(): O
 }
