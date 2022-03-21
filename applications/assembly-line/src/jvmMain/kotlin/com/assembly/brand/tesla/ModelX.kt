@@ -1,4 +1,4 @@
-package com.assembly.entity.tesla
+package com.assembly.brand.tesla
 
 import com.assembly.entity.Car
 

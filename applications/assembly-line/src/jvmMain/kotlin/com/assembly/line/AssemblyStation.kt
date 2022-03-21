@@ -1,0 +1,23 @@
+package com.assembly.line
+
+
+class AssemblyStation<I, O>(
+	val name: String,
+	val position: Int? = null,
+	val partOf: AssemblyLine<*>? = null,
+	val handler: I.() -> O,
+) {
+	override fun toString(): String {
+		return "$name:$position"
+	}
+
+	operator fun <R> plus(station: AssemblyStation<O, R>): AssemblyStation<O, R> {
+		if (this.partOf == null) {
+			TODO("handle this")
+		}
+		return this.partOf.add(station)
+	}
+
+
+
+}
