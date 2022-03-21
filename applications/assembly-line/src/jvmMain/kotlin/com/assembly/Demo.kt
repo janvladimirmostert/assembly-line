@@ -2,52 +2,13 @@ package com.assembly
 
 import com.assembly.console.colour.COLOUR.ANSI_GREEN
 import com.assembly.console.colour.toColour
+import com.assembly.entity.tesla.CyberTruckAssembly
+import com.assembly.line.TeslaCybertruckAssemblyLine
 import com.assembly.log.getLogger
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 
-
-//class AssemblyCarEntityIml : AssemblyCarEntity {
-//
-//	companion object {
-//		private val log = getLogger()
-//	}
-//
-//	override suspend fun paint() {
-//		log.info("painting!!!")
-//	}
-//
-//	override suspend fun build(): Car {
-//		log.info("building!!!")
-//	}
-//}
-
-
-//class AssemblyLine(
-//	vararg val activity: Activity,
-//) {
-//
-//	companion object {
-//		val log = getLogger()
-//	}
-//
-//	suspend fun produce(e: AssemblyCarEntity) {
-//		this.activity.filter { it !is QualityCheck }.forEach { activity ->
-//			log.info(activity::class)
-//			activity.execute()
-//		}
-//		this.activity.filterIsInstance<QualityCheck>().forEach { activity ->
-//			log.info(activity as QualityCheck)
-//			activity.execute()
-//		}
-//	}
-//}
-//
-
-
-class AssemblyLine<T>(
-	private val initialValue: T,
-) {
+class AssemblyLine<T> {
 
 	private val mutex = Mutex()
 	private var maxPosition: Int = 0
@@ -67,7 +28,7 @@ class AssemblyLine<T>(
 			return listOf(*positiveIndexedStations, *negativeIndexStations)
 		}
 
-	suspend operator fun <O> plus(station: Station<T, O>): Station<T, O> {
+	operator fun <O> plus(station: Station<T, O>): Station<T, O> {
 		return add(station)
 	}
 
@@ -107,7 +68,7 @@ class Station<I, O>(
 		return "$name:$position"
 	}
 
-	suspend operator fun <R> plus(station: Station<O, R>): Station<O, R> {
+	operator fun <R> plus(station: Station<O, R>): Station<O, R> {
 		if (this.partOf == null) {
 			TODO("handle this")
 		}
@@ -131,28 +92,32 @@ object Demo {
 			String(it.readAllBytes()).toColour(ANSI_GREEN)
 		})
 
-		val line = AssemblyLine("")
-		val paint = line + Station(name = "paint", position = 10) {
-			0
-		}
-		val build = paint + Station(name = "build") {
-			0.5
-		}
-
-		val qa = build + Station(name = "qa", position = -1) {
-			0
-		}
-
-		val blah = paint + Station(name = "blah", 10) {
-			""
-		}
-
-		println(blah)
-		println(line)
+		TeslaCybertruckAssemblyLine().produce(
+			CyberTruckAssembly()
+		)
 
 
 
+//		val line = AssemblyLine("")
+//		val paint = line + Station(name = "paint", position = 10) {
+//			0
+//		}
+//		val build = paint + Station(name = "build") {
+//			0.5
+//		}
+//
+//		val qa = build + Station(name = "qa", position = -1) {
+//			0
+//		}
+//
+//		val blah = paint + Station(name = "blah", 10) {
+//			""
+//		}
 
+
+
+
+		Unit
 	}
 
 }

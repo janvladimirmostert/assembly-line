@@ -8,12 +8,13 @@ import com.assembly.log.getLogger
 
 class TeslaCybertruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssembly, CyberTruck> {
 
+	private val line = AssemblyLine<CyberTruckAssembly>()
+
 	companion object {
 		val log = getLogger()
 	}
 
-	override suspend fun produce(assembly: CyberTruckAssembly): CyberTruck {
-		val line = AssemblyLine(assembly)
+	init {
 		val assemblyMec = line + Station("Assembly Mechanical") {
 			this
 		}
@@ -26,7 +27,15 @@ class TeslaCybertruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckA
 		val qa = build + Station("QA", -1) {
 			this
 		}
-		return CyberTruck()
+	}
+
+	override suspend fun produce(assembly: CyberTruckAssembly): CyberTruck {
+
+
+		println(line)
+
+		TODO("TODO")
+
 	}
 
 
