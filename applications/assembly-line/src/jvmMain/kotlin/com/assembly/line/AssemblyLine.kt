@@ -1,12 +1,16 @@
 package com.assembly.line
 
+import com.assembly.entity.Assembly
+import com.assembly.entity.Car
 import kotlinx.coroutines.sync.Mutex
 
-class AssemblyLine<T>(private val name: String) {
+class AssemblyLine<I : Assembly, O : Car>(private val name: String) {
 
 	private val mutex = Mutex()
 	private var maxPosition: Int = 0
+
 	private val internalStations = mutableListOf<AssemblyStation<*, *>>()
+
 	val stations: List<AssemblyStation<*, *>>
 		get() {
 			val positiveIndexedStations = internalStations.filter {
@@ -22,7 +26,7 @@ class AssemblyLine<T>(private val name: String) {
 			return listOf(*positiveIndexedStations, *negativeIndexStations)
 		}
 
-	operator fun <O> plus(station: AssemblyStation<T, O>): AssemblyStation<T, O> {
+	operator fun <T> plus(station: AssemblyStation<I, T>): AssemblyStation<I, T> {
 		return add(station)
 	}
 
@@ -30,8 +34,8 @@ class AssemblyLine<T>(private val name: String) {
 		return "${this.name}: ${this.stations.joinToString(", ") { it.toString() }}"
 	}
 
-	fun <O, R> add(station: AssemblyStation<O, R>): AssemblyStation<O, R> {
-		val newStation = AssemblyStation(
+	fun <I, T: Any?> add(station: AssemblyStation<I, T>): AssemblyStation<I, T> {
+		val newStation = AssemblyStation<I, T>(
 			name = station.name,
 			position = station.position.let { stationPosition ->
 				if (stationPosition != null) {
@@ -48,6 +52,15 @@ class AssemblyLine<T>(private val name: String) {
 		)
 		internalStations.add(newStation)
 		return newStation
+	}
+
+	fun process(input: I): O {
+		var result: Any? = input
+		stations.forEach {
+			result = (it.handler as (Any?.() -> Any?)).invoke(result)
+			println(result)
+		}
+		return result as O
 	}
 
 }

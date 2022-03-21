@@ -1,18 +1,23 @@
 package com.assembly.brand.tesla
 
+import com.assembly.console.colour.COLOUR
+import com.assembly.entity.Assembly
 import com.assembly.entity.Car
 import com.assembly.line.AssemblyLine
 import com.assembly.line.AssemblyStation
 import com.assembly.log.getLogger
 
-class CyberTruckCar : Car {
+data class CyberTruckAssembly(
+	val tintedWindows: Boolean = true
+) : Assembly
 
+data class CyberTruckCar(
+	val tintedWindows: Boolean = true
+) : Car
 
-}
+class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssembly, CyberTruckCar> {
 
-class CyberTruckAssembly : com.assembly.entity.AssemblyLine<CyberTruckAssembly, CyberTruckCar> {
-
-	private val line = AssemblyLine<CyberTruckAssembly>(this.javaClass.simpleName)
+	private val line = AssemblyLine<CyberTruckAssembly, CyberTruckCar>(this.javaClass.simpleName)
 
 	companion object {
 		val log = getLogger()
@@ -34,7 +39,9 @@ class CyberTruckAssembly : com.assembly.entity.AssemblyLine<CyberTruckAssembly, 
 	}
 
 	override suspend fun produce(assembly: CyberTruckAssembly): CyberTruckCar {
-		println(line)
+
+		line.process(assembly)
+
 		return CyberTruckCar()
 	}
 

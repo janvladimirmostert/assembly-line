@@ -1,10 +1,10 @@
 package com.assembly.line
 
 
-class AssemblyStation<I, O>(
+class AssemblyStation<I: Any?, O: Any?>(
 	val name: String,
 	val position: Int? = null,
-	val partOf: AssemblyLine<*>? = null,
+	val partOf: AssemblyLine<*, *>? = null,
 	val handler: I.() -> O,
 ) {
 	override fun toString(): String {

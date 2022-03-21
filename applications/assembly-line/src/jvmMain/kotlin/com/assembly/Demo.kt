@@ -3,6 +3,7 @@ package com.assembly
 import com.assembly.console.colour.COLOUR.ANSI_GREEN
 import com.assembly.console.colour.toColour
 import com.assembly.brand.tesla.CyberTruckAssembly
+import com.assembly.brand.tesla.CyberTruckAssemblyLine
 import com.assembly.log.getLogger
 import kotlinx.coroutines.runBlocking
 
@@ -18,9 +19,13 @@ object Demo {
 			String(it.readAllBytes()).toColour(ANSI_GREEN)
 		})
 
-		CyberTruckAssembly().produce(
-			CyberTruckAssembly()
+		val car = CyberTruckAssemblyLine().produce(
+			CyberTruckAssembly(tintedWindows = false)
 		)
+
+		println("====")
+		println(car)
+		println("====")
 
 
 
