@@ -54,7 +54,8 @@ class AssemblyLine<I : Assembly, O : Car>(private val name: String) {
 		return newStation
 	}
 
-	// not proud of these castings, but it gets the job done for now
+	// TODO: investigate if there is a cleaner way to avoid casting
+	//     not proud of casting these Station types, but it gets the job done for now
 	@Suppress("UNCHECKED_CAST")
 	fun process(input: I): O {
 		var result: Any? = input
