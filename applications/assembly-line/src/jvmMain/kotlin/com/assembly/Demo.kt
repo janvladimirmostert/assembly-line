@@ -79,11 +79,14 @@ class AssemblyLine<T>(
 		val newStation = Station(
 			name = station.name,
 			position = station.position.let { stationPosition ->
-				val pos = stationPosition ?: 0
-				if (pos > maxPosition) {
-					maxPosition = pos
+				if (stationPosition != null) {
+					if (stationPosition > maxPosition) {
+						maxPosition = stationPosition + 1
+					}
+					stationPosition
+				} else {
+					++maxPosition
 				}
-				++maxPosition
 			},
 			handler = station.handler,
 			partOf = this
@@ -129,7 +132,7 @@ object Demo {
 		})
 
 		val line = AssemblyLine("")
-		val paint = line + Station(name = "paint", position = 0) {
+		val paint = line + Station(name = "paint", position = 10) {
 			0
 		}
 		val build = paint + Station(name = "build") {
@@ -140,7 +143,7 @@ object Demo {
 			0
 		}
 
-		val blah = qa + Station(name = "blah") {
+		val blah = paint + Station(name = "blah", 10) {
 			""
 		}
 
