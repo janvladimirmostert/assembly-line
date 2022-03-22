@@ -5,7 +5,7 @@ class AssemblyStation<I: Any?, O: Any?>(
 	val name: String,
 	val position: Int? = null,
 	val partOf: AssemblyLine<*, *>? = null,
-	val handler: I.() -> O,
+	val handler: (I) -> O,
 ) {
 	override fun toString(): String {
 		return "$name:$position"

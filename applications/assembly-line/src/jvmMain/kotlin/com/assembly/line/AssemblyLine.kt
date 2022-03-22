@@ -2,12 +2,17 @@ package com.assembly.line
 
 import com.assembly.entity.Assembly
 import com.assembly.entity.Car
+import com.assembly.log.getLogger
 import kotlinx.coroutines.sync.Mutex
 
 class AssemblyLine<I : Assembly, O : Car>(private val name: String) {
 
 	private val mutex = Mutex()
 	private var maxPosition: Int = 0
+
+	companion object {
+		val log = getLogger()
+	}
 
 	private val internalStations = mutableListOf<AssemblyStation<*, *>>()
 
@@ -59,9 +64,8 @@ class AssemblyLine<I : Assembly, O : Car>(private val name: String) {
 	@Suppress("UNCHECKED_CAST")
 	fun process(input: I): O {
 		var result: Any? = input
-		stations.forEach {
-			result = (it.handler as (Any?.() -> Any?)).invoke(result)
-			println(result)
+		stations.forEach { station ->
+			result = (station.handler as (Any?.() -> Any?)).invoke(result)
 		}
 		return result as O
 	}

@@ -1,16 +1,17 @@
 package com.assembly
 
-import com.assembly.console.colour.COLOUR.ANSI_GREEN
 import com.assembly.console.colour.toColour
 import com.assembly.brand.tesla.CyberTruckAssembly
 import com.assembly.brand.tesla.CyberTruckAssemblyLine
+import com.assembly.console.colour.COLOUR.*
 import com.assembly.log.getLogger
 import kotlinx.coroutines.runBlocking
+import kotlin.random.Random
 
 object Demo {
 
 	private val log = getLogger()
-
+	private val cyberTruckAssemblyLine = CyberTruckAssemblyLine()
 
 	@JvmStatic
 	fun main(args: Array<String>) = runBlocking {
@@ -19,13 +20,16 @@ object Demo {
 			String(it.readAllBytes()).toColour(ANSI_GREEN)
 		})
 
-		val car = CyberTruckAssemblyLine().produce(
-			CyberTruckAssembly(tintedWindows = false)
+		val car = cyberTruckAssemblyLine.produce(
+			CyberTruckAssembly(
+				trackingColour = ANSI_BLUE,
+				expectedBatteries = 100,
+				expectedTintedWindows = true,
+				expectedBulletProofWindows = true,
+			)
 		)
+		log.info("\n$car".toColour(car.trackingColour))
 
-		println("====")
-		println(car)
-		println("====")
 
 
 
