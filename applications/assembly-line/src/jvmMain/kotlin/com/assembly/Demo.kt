@@ -23,10 +23,12 @@ object Demo {
 	@JvmStatic
 	fun main(args: Array<String>) = runBlocking {
 
+		// ascii art is important
 		log.info(javaClass.getResourceAsStream("/art.txt")?.use {
 			String(it.readAllBytes()).toColour(ANSI_GREEN)
 		})
 
+		// let's produce a Tesla Cybertruck via the CyberTruckAssemblyLine
 		val car1 = teslaCyberTruckAssemblyLine.produce(
 			CyberTruckAssembly(
 				trackingColour = ANSI_BLUE,
@@ -37,6 +39,7 @@ object Demo {
 		)
 		log.info("\n$car1".toColour(car1.trackingColour))
 
+		// let's produce a second Tesla Cybertruck with fewer features via the CyberTruckAssemblyLine
 		val car2 = teslaCyberTruckAssemblyLine.produce(
 			CyberTruckAssembly(
 				trackingColour = ANSI_GREEN,
@@ -47,6 +50,7 @@ object Demo {
 		)
 		log.info("\n$car2".toColour(car2.trackingColour))
 
+		// let's produce a very old Ford Model T which has no configuration options
 		val car3 = fordModelTAssemblyLine.produce(
 			ModelTAssembly(
 				trackingColour = ANSI_CYAN,
@@ -54,6 +58,7 @@ object Demo {
 		)
 		log.info("\n$car3".toColour(car3.trackingColour))
 
+		// let's adjust the production line to allow polishing Ford Model T
 		val fordModelTAssemblyLineWithPolish = object : AssemblyLine<ModelTAssembly, ModelTCar> {
 			private val newChain = AssemblyChain<ModelTAssembly, ModelTCar>("Polishable Model T")
 
@@ -78,11 +83,13 @@ object Demo {
 
 			override suspend fun produce(assembly: ModelTAssembly): ModelTCar {
 				log.info(newChain.toString().toColour(assembly.trackingColour))
-				return newChain.process(assembly)
+				return newChain.process(assembly, true)
 			}
 		}
 
-		listOf(ANSI_RED, ANSI_GREEN, ANSI_BLUE).forEach { color ->
+		// let's try and handle concurrent orders via a single production line
+		//
+		listOf(ANSI_RED, ANSI_GREEN, ANSI_BLUE, ANSI_YELLOW, ANSI_BLUE, ANSI_BLACK).forEach { color ->
 			launch {
 				val car4 = fordModelTAssemblyLineWithPolish.produce(ModelTAssembly(
 					trackingColour = color,

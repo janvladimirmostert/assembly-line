@@ -52,7 +52,7 @@ data class ModelTAssembly(
 			"You can have any colour, as long as it's black - apparently not Henry Ford".toColour(trackingColour)
 		)
 		log.info("Painting it black ... by hand ...".toColour(trackingColour))
-		delay(Random.nextInt(2500).toLong())
+		delay(Random.nextInt(5500).toLong())
 		painted = true
 	}
 

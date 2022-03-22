@@ -1,5 +1,7 @@
 package com.assembly.line
 
+import com.assembly.console.colour.COLOUR
+import com.assembly.console.colour.toColour
 import com.assembly.entity.AssemblyCarEntity
 import com.assembly.entity.Car
 import com.assembly.log.getLogger
@@ -77,12 +79,15 @@ class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 	// TODO: investigate if there is a cleaner way to avoid casting
 	//     not proud of casting these Station types, but it gets the job done for now
 	@Suppress("UNCHECKED_CAST")
-	suspend fun process(input: I): O {
+	suspend fun process(input: I, printStation: Boolean = false): O {
 		var result: Any? = input
 		var currentStation = stations.first()
 		while (true) {
 			// we assume that only one operation can happen at a time at each station concurrently
 			result = mutex.withLock {
+				if (printStation) {
+					log.info(" $currentStation ".toColour(COLOUR.ANSI_BLACK_BACKGROUND, COLOUR.ANSI_WHITE))
+				}
 				(currentStation.handler as (suspend Any?.() -> Any?)).invoke(result)
 			}
 			currentStation = if (result == null) {
