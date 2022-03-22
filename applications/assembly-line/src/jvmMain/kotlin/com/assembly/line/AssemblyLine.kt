@@ -39,7 +39,7 @@ class AssemblyLine<I : AssemblyCarEntity, O : Car>(private val name: String) {
 		return "${this.name}: ${this.stations.joinToString(", ") { it.toString() }}"
 	}
 
-	fun <I, T: Any?> add(station: AssemblyStation<I, T>): AssemblyStation<I, T> {
+	fun <I, T : Any?> add(station: AssemblyStation<I, T>): AssemblyStation<I, T> {
 		val newStation = AssemblyStation<I, T>(
 			name = station.name,
 			position = station.position.let { stationPosition ->
@@ -59,14 +59,40 @@ class AssemblyLine<I : AssemblyCarEntity, O : Car>(private val name: String) {
 		return newStation
 	}
 
+	fun getNextStation(currentStation: AssemblyStation<*, *>?): AssemblyStation<*, *>? {
+		val allStations = stations
+		if (currentStation == null) {
+			return allStations.first()
+		}
+		val indexOfCurrentStation = allStations.indexOfFirst { it.position == currentStation.position }
+		if (indexOfCurrentStation < 0) {
+			return allStations.first()
+		}
+		return allStations.filterIndexed { index, _ ->
+			index > indexOfCurrentStation
+		}.firstOrNull()
+	}
+
 	// TODO: investigate if there is a cleaner way to avoid casting
 	//     not proud of casting these Station types, but it gets the job done for now
 	@Suppress("UNCHECKED_CAST")
 	fun process(input: I): O {
 		var result: Any? = input
-		stations.forEach { station ->
-			result = (station.handler as (Any?.() -> Any?)).invoke(result)
+		var currentStation = stations.first()
+		while (true) {
+			result = (currentStation.handler as (Any?.() -> Any?)).invoke(result)
+			currentStation = if (result == null) {
+				break;
+			} else if (result is AssemblyRedirect<*, *>) {
+				val redirect = result
+				result = redirect.data
+				redirect.station
+			} else {
+				getNextStation(currentStation) ?: break
+			}
 		}
+
+
 		return result as O
 	}
 

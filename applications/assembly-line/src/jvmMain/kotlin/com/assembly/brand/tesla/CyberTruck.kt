@@ -5,6 +5,7 @@ import com.assembly.console.colour.toColour
 import com.assembly.entity.AssemblyCarEntity
 import com.assembly.entity.Car
 import com.assembly.line.AssemblyLine
+import com.assembly.line.AssemblyRedirect
 import com.assembly.line.AssemblyStation
 import com.assembly.log.getLogger
 import kotlin.random.Random
@@ -32,7 +33,7 @@ data class CyberTruckCar(
 	val hasFunctioningWheels: Boolean,
 	val hasBulletProofWindows: Boolean,
 	val hasWorkingConsole: Boolean,
-	val hasUptoDateSoftware: Boolean
+	val hasUptoDateSoftware: Boolean,
 ) : Car
 
 class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssembly, CyberTruckCar> {
@@ -60,6 +61,13 @@ class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssemb
 		if (it.expectedTintedWindows && Random.nextInt(10) > 1) {
 			log.info("Adding Tinted Windows".toColour(it.trackingColour))
 			config = config.copy(actualTintedWindows = true)
+		}
+
+		// adding bullet-proof windows to the CyberTruck if expected
+		// simulate ~1% failure rate
+		if (it.expectedBulletProofWindows && Random.nextInt(10) > 1) {
+			log.info("Adding BulletProof Windows".toColour(it.trackingColour))
+			config = config.copy(actualBulletProofWindows = true)
 		}
 
 		// add some battery packs
@@ -110,7 +118,71 @@ class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssemb
 		)
 	}
 	val qa = softwareUpdate + AssemblyStation("QA", -1) {
-		it
+
+		var car = it
+
+		// validate that bullet-proof windows are installed if it's expected
+		if (car.assembly.expectedBulletProofWindows && !car.hasBulletProofWindows) {
+			log.info("CyberTruck is missing BulletProof Windows, rebuilding ...".toColour(car.trackingColour))
+			return@AssemblyStation AssemblyRedirect(
+				station = build,
+				car.assembly
+			)
+		}
+
+		// validate that the minimum battery size is installed
+		if (car.assembly.expectedBatteries > car.batteries) {
+			val missingBatteries = car.assembly.expectedBatteries - car.batteries
+			log.info("CyberTruck is missing $missingBatteries batteries, rebuilding ...".toColour(car.trackingColour))
+			return@AssemblyStation AssemblyRedirect(
+				station = assemblyMechanical,
+				car.assembly
+			)
+		}
+
+		// validate that tinted windows are installed if requested
+		if (car.assembly.expectedTintedWindows && !car.hasTintedWindows) {
+			log.info("CyberTruck is missing Tinted Windows, rebuilding ...".toColour(car.trackingColour))
+			return@AssemblyStation AssemblyRedirect(
+				station = assemblyMechanical,
+				car.assembly
+			)
+		}
+
+		// validate that console is working
+		if (!car.hasWorkingConsole) {
+			log.info("CyberTruck console malfunction, rebuilding ...".toColour(car.trackingColour))
+			return@AssemblyStation AssemblyRedirect(
+				station = assemblyInternal,
+				car.assembly
+			)
+		}
+
+		// kick wheels to ensure they don't fall off
+		if (!car.hasFunctioningWheels) {
+			log.info("CyberTruck wheels not reliable, rebuilding ...".toColour(car.trackingColour))
+			return@AssemblyStation AssemblyRedirect(
+				station = assemblyMechanical,
+				car.assembly
+			)
+		}
+
+		// validate that software is up to date
+		if (!car.hasUptoDateSoftware) {
+			log.info("Software not up to date, QA is updating Software".toColour(car.trackingColour))
+			car = car.copy(hasUptoDateSoftware = true)
+		}
+
+		if (Random.nextInt(100) > 20) {
+			log.info("Quality Check Failed, rebuilding ...".toColour(car.trackingColour))
+			return@AssemblyStation AssemblyRedirect(
+				station = build,
+				car.assembly
+			)
+		}
+
+		car
+
 	}
 
 	override suspend fun produce(assembly: CyberTruckAssembly): CyberTruckCar {
