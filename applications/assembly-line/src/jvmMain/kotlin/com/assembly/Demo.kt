@@ -20,7 +20,7 @@ object Demo {
 			String(it.readAllBytes()).toColour(ANSI_GREEN)
 		})
 
-		val car = cyberTruckAssemblyLine.produce(
+		val car1 = cyberTruckAssemblyLine.produce(
 			CyberTruckAssembly(
 				trackingColour = ANSI_BLUE,
 				expectedBatteries = 100,
@@ -28,9 +28,17 @@ object Demo {
 				expectedBulletProofWindows = true,
 			)
 		)
-		log.info("\n$car".toColour(car.trackingColour))
+		log.info("\n$car1".toColour(car1.trackingColour))
 
-
+		val car2 = cyberTruckAssemblyLine.produce(
+			CyberTruckAssembly(
+				trackingColour = ANSI_GREEN,
+				expectedBatteries = 50,
+				expectedTintedWindows = false,
+				expectedBulletProofWindows = false,
+			)
+		)
+		log.info("\n$car2".toColour(car2.trackingColour))
 
 
 		Unit
