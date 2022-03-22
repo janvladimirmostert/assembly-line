@@ -4,6 +4,7 @@ import com.assembly.entity.AssemblyCarEntity
 import com.assembly.entity.Car
 import com.assembly.log.getLogger
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 
@@ -80,7 +81,10 @@ class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 		var result: Any? = input
 		var currentStation = stations.first()
 		while (true) {
-			result = (currentStation.handler as (suspend Any?.() -> Any?)).invoke(result)
+			// we assume that only one operation can happen at a time at each station concurrently
+			result = mutex.withLock {
+				(currentStation.handler as (suspend Any?.() -> Any?)).invoke(result)
+			}
 			currentStation = if (result == null) {
 				break;
 			} else if (result is AssemblyRedirect<*, *>) {

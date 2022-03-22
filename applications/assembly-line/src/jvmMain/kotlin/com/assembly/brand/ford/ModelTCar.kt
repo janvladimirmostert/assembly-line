@@ -9,6 +9,7 @@ data class ModelTCar(
 	val interiorAssembled: Boolean,
 	val mechanicAssembled: Boolean,
 	val painted: Boolean,
+	val polished: Boolean = false
 ) : Car {
 
 }
