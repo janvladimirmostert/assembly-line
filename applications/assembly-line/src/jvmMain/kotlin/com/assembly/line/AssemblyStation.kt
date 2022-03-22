@@ -1,10 +1,9 @@
 package com.assembly.line
 
-
 class AssemblyStation<I: Any?, O: Any?>(
 	val name: String,
 	val position: Int? = null,
-	val partOf: AssemblyLine<*, *>? = null,
+	val partOf: AssemblyChain<*, *>? = null,
 	val handler: (I) -> O,
 ) {
 	override fun toString(): String {
@@ -17,7 +16,5 @@ class AssemblyStation<I: Any?, O: Any?>(
 		}
 		return this.partOf.add(station)
 	}
-
-
 
 }

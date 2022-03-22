@@ -1,51 +1,23 @@
 package com.assembly.brand.tesla
 
-import com.assembly.console.colour.COLOUR
 import com.assembly.console.colour.toColour
-import com.assembly.entity.AssemblyCarEntity
-import com.assembly.entity.Car
-import com.assembly.line.AssemblyLine
+import com.assembly.entity.AssemblyLine
+import com.assembly.line.AssemblyChain
 import com.assembly.line.AssemblyRedirect
 import com.assembly.line.AssemblyStation
 import com.assembly.log.getLogger
 import kotlin.random.Random
 
-data class CyberTruckAssembly(
-	val trackingColour: COLOUR,
-	// expected
-	val expectedBatteries: Int,
-	val expectedTintedWindows: Boolean,
-	val expectedBulletProofWindows: Boolean,
-	// actual
-	val actualBatteries: Int = 0,
-	val actualTintedWindows: Boolean = false,
-	val actualBulletProofWindows: Boolean = false,
-	val actualFunctioningWheels: Boolean = false,
-	val actualWorkingConsole: Boolean = false,
-	val actualUptoDateSoftware: Boolean = false,
-) : AssemblyCarEntity
-
-data class CyberTruckCar(
-	val assembly: CyberTruckAssembly,
-	val trackingColour: COLOUR,
-	val hasTintedWindows: Boolean,
-	val batteries: Int,
-	val hasFunctioningWheels: Boolean,
-	val hasBulletProofWindows: Boolean,
-	val hasWorkingConsole: Boolean,
-	val hasUptoDateSoftware: Boolean,
-) : Car
-
-class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssembly, CyberTruckCar> {
+class CyberTruckAssemblyLine : AssemblyLine<CyberTruckAssembly, CyberTruckCar> {
 
 	companion object {
 		val log = getLogger()
 	}
 
-	val line = AssemblyLine<CyberTruckAssembly, CyberTruckCar>(this.javaClass.simpleName)
+	private val chain = AssemblyChain<CyberTruckAssembly, CyberTruckCar>(this.javaClass.simpleName)
 
 	// Add Mechanical Assembly Station
-	val assemblyMechanical = line + AssemblyStation("Assembly Mechanical") {
+	private val assemblyMechanical = chain + AssemblyStation("Assembly Mechanical") {
 
 		var config = it
 
@@ -84,7 +56,7 @@ class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssemb
 	}
 
 	// Add Internal Assembly Station
-	val assemblyInternal = assemblyMechanical + AssemblyStation("Assembly Interior") {
+	private val assemblyInternal = assemblyMechanical + AssemblyStation("Assembly Interior") {
 
 		var config = it
 
@@ -98,7 +70,7 @@ class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssemb
 		config
 	}
 
-	val build = assemblyInternal + AssemblyStation("Build") {
+	private val build = assemblyInternal + AssemblyStation("Build") {
 		log.info("Building CyberTruck".toColour(it.trackingColour))
 		CyberTruckCar(
 			assembly = it,
@@ -111,7 +83,8 @@ class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssemb
 			hasUptoDateSoftware = false
 		)
 	}
-	val softwareUpdate = build + AssemblyStation("Software Update") {
+
+	private val softwareUpdate = build + AssemblyStation("Software Update") {
 		log.info("Updating software".toColour(it.trackingColour))
 		it.copy(
 			hasUptoDateSoftware = Random.nextInt(100) > 1
@@ -186,9 +159,8 @@ class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssemb
 	}
 
 	override suspend fun produce(assembly: CyberTruckAssembly): CyberTruckCar {
-		log.info(line.toString().toColour(assembly.trackingColour))
-		return line.process(assembly)
+		log.info(chain.toString().toColour(assembly.trackingColour))
+		return chain.process(assembly)
 	}
-
 
 }
