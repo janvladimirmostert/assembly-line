@@ -125,7 +125,7 @@ class CyberTruckAssemblyLine : com.assembly.entity.AssemblyLine<CyberTruckAssemb
 		if (car.assembly.expectedBulletProofWindows && !car.hasBulletProofWindows) {
 			log.info("CyberTruck is missing BulletProof Windows, rebuilding ...".toColour(car.trackingColour))
 			return@AssemblyStation AssemblyRedirect(
-				station = build,
+				station = assemblyMechanical,
 				car.assembly
 			)
 		}
