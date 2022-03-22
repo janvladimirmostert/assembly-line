@@ -1,4 +1,4 @@
 package com.assembly.entity
 
-interface Assembly {
+interface AssemblyCarEntity {
 }

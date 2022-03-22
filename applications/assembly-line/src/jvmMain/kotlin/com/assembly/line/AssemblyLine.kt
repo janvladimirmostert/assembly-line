@@ -1,11 +1,11 @@
 package com.assembly.line
 
-import com.assembly.entity.Assembly
+import com.assembly.entity.AssemblyCarEntity
 import com.assembly.entity.Car
 import com.assembly.log.getLogger
 import kotlinx.coroutines.sync.Mutex
 
-class AssemblyLine<I : Assembly, O : Car>(private val name: String) {
+class AssemblyLine<I : AssemblyCarEntity, O : Car>(private val name: String) {
 
 	private val mutex = Mutex()
 	private var maxPosition: Int = 0

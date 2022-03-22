@@ -2,7 +2,7 @@ package com.assembly.brand.tesla
 
 import com.assembly.console.colour.COLOUR
 import com.assembly.console.colour.toColour
-import com.assembly.entity.Assembly
+import com.assembly.entity.AssemblyCarEntity
 import com.assembly.entity.Car
 import com.assembly.line.AssemblyLine
 import com.assembly.line.AssemblyStation
@@ -22,7 +22,7 @@ data class CyberTruckAssembly(
 	val actualFunctioningWheels: Boolean = false,
 	val actualWorkingConsole: Boolean = false,
 	val actualUptoDateSoftware: Boolean = false,
-) : Assembly
+) : AssemblyCarEntity
 
 data class CyberTruckCar(
 	val assembly: CyberTruckAssembly,
