@@ -22,7 +22,7 @@ data class ModelTCar(
 		TODO("Not yet implemented")
 	}
 
-	override suspend fun build() {
+	override suspend fun build(): ModelTCar {
 		TODO("Not yet implemented")
 	}
 

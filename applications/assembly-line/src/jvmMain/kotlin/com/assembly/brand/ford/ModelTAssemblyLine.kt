@@ -16,7 +16,8 @@ class ModelTAssemblyLine : AssemblyLine<ModelTAssembly, ModelTCar> {
 
 	// add paint station to the chain
 	private val paint = chain + AssemblyStation("Paint") {
-
+		//it.paint()
+		it
 	}
 
 	// add mechanic assembly station to the chain
