@@ -8,13 +8,13 @@ import com.assembly.line.AssemblyStation
 import com.assembly.log.getLogger
 import kotlin.random.Random
 
-class ModelTAssemblyLine : AssemblyLine<ModelTAssembly, ModelTCar> {
+class ModelTAssemblyLine(
+	private val chain: AssemblyChain<ModelTAssembly, ModelTCar> = AssemblyChain(this::class.java.simpleName),
+) : AssemblyLine<ModelTAssembly, ModelTCar> {
 
 	companion object {
 		val log = getLogger()
 	}
-
-	private val chain = AssemblyChain<ModelTAssembly, ModelTCar>(this.javaClass.simpleName)
 
 	// add paint station to the chain
 	private val paint = chain + AssemblyStation("Paint") {
@@ -48,14 +48,16 @@ class ModelTAssemblyLine : AssemblyLine<ModelTAssembly, ModelTCar> {
 				it.assembly
 			)
 		}
-
 		return@AssemblyStation it
-
 	}
 
 	override suspend fun produce(assembly: ModelTAssembly): ModelTCar {
 		log.info(chain.toString().toColour(assembly.trackingColour))
 		return chain.process(assembly)
+	}
+
+	override fun expose(handler: (AssemblyChain<ModelTAssembly, ModelTCar>) -> Unit) {
+		handler(this.chain)
 	}
 
 }

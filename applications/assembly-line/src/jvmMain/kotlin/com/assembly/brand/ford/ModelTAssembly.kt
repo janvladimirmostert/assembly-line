@@ -40,7 +40,10 @@ data class ModelTAssembly(
 		delay(Random.nextInt(2500).toLong())
 		return ModelTCar(
 			assembly = this,
-			trackingColour = this.trackingColour
+			trackingColour = this.trackingColour,
+			interiorAssembled = this.interiorAssembled,
+			mechanicAssembled = this.mechanicAssembled,
+			painted = this.painted
 		)
 	}
 

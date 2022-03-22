@@ -8,13 +8,13 @@ import com.assembly.line.AssemblyStation
 import com.assembly.log.getLogger
 import kotlin.random.Random
 
-class CyberTruckAssemblyLine : AssemblyLine<CyberTruckAssembly, CyberTruckCar> {
+class CyberTruckAssemblyLine(
+	private val chain: AssemblyChain<CyberTruckAssembly, CyberTruckCar> = AssemblyChain(this::class.java.simpleName),
+) : AssemblyLine<CyberTruckAssembly, CyberTruckCar> {
 
 	companion object {
 		val log = getLogger()
 	}
-
-	private val chain = AssemblyChain<CyberTruckAssembly, CyberTruckCar>(this.javaClass.simpleName)
 
 	// Add Mechanical Assembly Station
 	private val assemblyMechanical = chain + AssemblyStation("Assembly Mechanical") {
