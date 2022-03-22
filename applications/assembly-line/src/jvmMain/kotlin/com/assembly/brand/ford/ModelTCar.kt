@@ -1,5 +1,6 @@
 package com.assembly.brand.ford
 
+import com.assembly.console.colour.COLOUR
 import com.assembly.entity.Car
 import com.assembly.process.AssemblyInterior
 import com.assembly.process.AssemblyMechanich
@@ -8,6 +9,7 @@ import com.assembly.process.Paint
 
 data class ModelTCar(
 	val assembly: ModelTAssembly,
+	val trackingColour: COLOUR,
 ) : Car, Paint, AssemblyMechanich, AssemblyInterior, Build {
 
 	override suspend fun paint() {

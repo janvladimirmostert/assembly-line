@@ -146,7 +146,7 @@ class CyberTruckAssemblyLine : AssemblyLine<CyberTruckAssembly, CyberTruckCar> {
 			car = car.copy(hasUptoDateSoftware = true)
 		}
 
-		if (Random.nextInt(100) > 20) {
+		if (Random.nextInt(100) < 20) {
 			log.info("Quality Check Failed, rebuilding ...".toColour(car.trackingColour))
 			return@AssemblyStation AssemblyRedirect(
 				station = build,
@@ -154,7 +154,7 @@ class CyberTruckAssemblyLine : AssemblyLine<CyberTruckAssembly, CyberTruckCar> {
 			)
 		}
 
-		car
+		return@AssemblyStation car
 
 	}
 

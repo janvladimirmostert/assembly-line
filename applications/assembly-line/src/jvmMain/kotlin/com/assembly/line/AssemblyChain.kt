@@ -76,11 +76,11 @@ class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 	// TODO: investigate if there is a cleaner way to avoid casting
 	//     not proud of casting these Station types, but it gets the job done for now
 	@Suppress("UNCHECKED_CAST")
-	fun process(input: I): O {
+	suspend fun process(input: I): O {
 		var result: Any? = input
 		var currentStation = stations.first()
 		while (true) {
-			result = (currentStation.handler as (Any?.() -> Any?)).invoke(result)
+			result = (currentStation.handler as (suspend Any?.() -> Any?)).invoke(result)
 			currentStation = if (result == null) {
 				break;
 			} else if (result is AssemblyRedirect<*, *>) {

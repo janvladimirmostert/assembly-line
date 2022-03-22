@@ -3,8 +3,10 @@ package com.assembly.brand.ford
 import com.assembly.console.colour.toColour
 import com.assembly.entity.AssemblyLine
 import com.assembly.line.AssemblyChain
+import com.assembly.line.AssemblyRedirect
 import com.assembly.line.AssemblyStation
 import com.assembly.log.getLogger
+import kotlin.random.Random
 
 class ModelTAssemblyLine : AssemblyLine<ModelTAssembly, ModelTCar> {
 
@@ -16,27 +18,38 @@ class ModelTAssemblyLine : AssemblyLine<ModelTAssembly, ModelTCar> {
 
 	// add paint station to the chain
 	private val paint = chain + AssemblyStation("Paint") {
-		//it.paint()
+		it.paint()
 		it
 	}
 
 	// add mechanic assembly station to the chain
 	private val assemblyMechanic = paint + AssemblyStation("AssemblyMechanich") {
-
+		it.assemblyMechanic()
+		it
 	}
 
 	// add assembly interior station to the chain
 	private val assemblyInterior = assemblyMechanic + AssemblyStation("AssemblyInterior") {
-
+		it.assemblyInterior()
+		it
 	}
 
 	// add build station to the chain
 	private val build = assemblyInterior + AssemblyStation("Build") {
-
+		it.build()
 	}
 
 	// add a QA step to the chain
 	private val qa = build + AssemblyStation("QA", -1) {
+		if (Random.nextInt(100) < 20) {
+			log.info("Quality Check Failed, rebuilding ...".toColour(it.trackingColour))
+			return@AssemblyStation AssemblyRedirect(
+				station = paint,
+				it.assembly
+			)
+		}
+
+		return@AssemblyStation it
 
 	}
 
