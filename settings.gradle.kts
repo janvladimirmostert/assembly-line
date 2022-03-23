@@ -6,7 +6,6 @@ include("applications:assembly-line")
 // modules
 include("modules:console")
 include("modules:log")
-include("modules:operation")
 
 
 pluginManagement {

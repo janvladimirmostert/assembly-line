@@ -15,7 +15,6 @@ kotlin {
 			dependencies {
 				implementation(project(":modules:console"))
 				implementation(project(":modules:log"))
-				implementation(project(":modules:operation"))
 
 				val coroutinesVersion = "1.6.0"
 				implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
