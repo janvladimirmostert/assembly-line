@@ -3,17 +3,15 @@ package com.assembly
 import com.assembly.log.getLogger
 import org.junit.Test
 
-class SingleFileAssemblyTest {
+class PlaceholderTest {
 
-	val log = getLogger()
+	companion object {
+		private val log = getLogger()
+	}
 
 	@Test
 	fun doSomethingTest() {
-
-		log.info("TEST")
-
+		log.info("TODO: write test cases to test everything that's currently sitting inside Demo.kt")
 	}
-
-
 
 }

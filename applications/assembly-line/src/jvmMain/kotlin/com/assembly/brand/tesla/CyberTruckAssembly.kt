@@ -4,7 +4,7 @@ import com.assembly.console.colour.COLOUR
 import com.assembly.entity.AssemblyCarEntity
 
 /**
- * Configuration for a Tesla Model T assembly
+ * Configuration for a Tesla CyberTruck assembly
  */
 data class CyberTruckAssembly(
 	val trackingColour: COLOUR,
