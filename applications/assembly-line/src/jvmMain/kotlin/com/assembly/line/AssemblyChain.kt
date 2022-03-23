@@ -10,7 +10,6 @@ import kotlinx.coroutines.sync.withLock
 
 class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 
-	private val mutex = Mutex()
 	private var maxPosition: Int = 0
 
 	companion object {
@@ -84,7 +83,7 @@ class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 		var currentStation = stations.first()
 		while (true) {
 			// we assume that only one operation can happen at a time at each station concurrently
-			result = mutex.withLock {
+			result = currentStation.mutex.withLock {
 				if (printStation) {
 					log.info(" $currentStation ".toColour(COLOUR.ANSI_BLACK_BACKGROUND, COLOUR.ANSI_WHITE))
 				}

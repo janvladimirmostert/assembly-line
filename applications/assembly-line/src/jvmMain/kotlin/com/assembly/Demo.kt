@@ -88,7 +88,6 @@ object Demo {
 		}
 
 		// let's try and handle concurrent orders via a single production line
-		//
 		listOf(ANSI_RED, ANSI_GREEN, ANSI_BLUE, ANSI_YELLOW, ANSI_BLUE, ANSI_BLACK).forEach { color ->
 			launch {
 				val car4 = fordModelTAssemblyLineWithPolish.produce(ModelTAssembly(
