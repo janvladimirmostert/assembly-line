@@ -11,6 +11,13 @@ import com.assembly.process.Paint
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
+/**
+ * Since the Ford Model T was mostly all the same,
+ * we're simulating a Ford Model T with no configuration
+ * options
+ *
+ * @param trackingColour: used for logging with COLOUR
+ */
 data class ModelTAssembly(
 	val trackingColour: COLOUR,
 ) : AssemblyCarEntity, Paint, AssemblyMechanich, AssemblyInterior, Build {

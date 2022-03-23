@@ -5,9 +5,17 @@ import com.assembly.console.colour.toColour
 import com.assembly.entity.AssemblyCarEntity
 import com.assembly.entity.Car
 import com.assembly.log.getLogger
-import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+/**
+ * A DSL to allow chaining AssemblyStations so that the first station always
+ * receives an AssemblyCarEntity (I) and the last station always
+ * produces a Car (O)
+ *
+ * Assembly Chain doesn't currently support I -> J -> K -> O,
+ * ony I -> I -> I -> O -> O
+ *
+ */
 class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 
 	private var maxPosition: Int = 0
@@ -18,6 +26,7 @@ class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 
 	private val internalStations = mutableListOf<AssemblyStation<*, *>>()
 
+	// get a list of stations, but with negative index stations filtered out and added to the end
 	val stations: List<AssemblyStation<*, *>>
 		get() {
 			val positiveIndexedStations = internalStations.filter {
@@ -33,43 +42,51 @@ class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 			return listOf(*positiveIndexedStations, *negativeIndexStations)
 		}
 
+	// allow chain + station which would return a station
+	// since station too overrides +, you can also do station + station
 	operator fun <T> plus(station: AssemblyStation<I, T>): AssemblyStation<I, T> {
 		return add(station)
 	}
 
-	override fun toString(): String {
-		return "${this.name}: ${this.stations.joinToString(", ") { it.toString() }}"
-	}
-
+	// add another station to the chain
+	// this add is not meant to be run in parallel, but for safety, it's synchronised
 	fun <I, T : Any?> add(station: AssemblyStation<I, T>): AssemblyStation<I, T> {
-		val newStation = AssemblyStation<I, T>(
-			name = station.name,
-			position = station.position.let { stationPosition ->
-				if (stationPosition != null) {
-					if (stationPosition > maxPosition) {
-						maxPosition = stationPosition + 1
+		return synchronized(this) {
+
+			val newStation = AssemblyStation<I, T>(
+				name = station.name,
+				position = station.position.let { stationPosition ->
+					if (stationPosition != null) {
+						if (stationPosition > maxPosition) {
+							maxPosition = stationPosition + 1
+						}
+						stationPosition
+					} else {
+						++maxPosition
 					}
-					stationPosition
-				} else {
-					++maxPosition
-				}
-			},
-			handler = station.handler,
-			partOf = this
-		)
-		internalStations.add(newStation)
-		return newStation
+				},
+				handler = station.handler,
+				partOf = this
+			)
+			internalStations.add(newStation)
+			newStation
+		}
 	}
 
+	// lookup the next station given the current station
 	fun getNextStation(currentStation: AssemblyStation<*, *>?): AssemblyStation<*, *>? {
 		val allStations = stations
+		// if no station given, return this first option in the list
 		if (currentStation == null) {
 			return allStations.first()
 		}
+		// find the index of the current station in the list of stations
 		val indexOfCurrentStation = allStations.indexOfFirst { it.position == currentStation.position }
+		// if no index found, return the first station
 		if (indexOfCurrentStation < 0) {
 			return allStations.first()
 		}
+		// get the first station after the indexOfCurrentStation
 		return allStations.filterIndexed { index, _ ->
 			index > indexOfCurrentStation
 		}.firstOrNull()
@@ -90,7 +107,7 @@ class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 				(currentStation.handler as (suspend Any?.() -> Any?)).invoke(result)
 			}
 			currentStation = if (result == null) {
-				break;
+				break
 			} else if (result is AssemblyRedirect<*, *>) {
 				val redirect = result
 				result = redirect.data
@@ -102,6 +119,10 @@ class AssemblyChain<I : AssemblyCarEntity, O : Car>(private val name: String) {
 
 
 		return result as O
+	}
+
+	override fun toString(): String {
+		return "${this.name}: ${this.stations.joinToString(", ") { it.toString() }}"
 	}
 
 }

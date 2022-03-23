@@ -8,6 +8,12 @@ import com.assembly.line.AssemblyStation
 import com.assembly.log.getLogger
 import kotlin.random.Random
 
+/**
+ * A Tesla CyberTruck Assembly line which has all the implementation detail
+ * implemented directly in the AssemblyStations
+ *
+ * @param chain: chain of assembly operations
+ */
 class CyberTruckAssemblyLine(
 	private val chain: AssemblyChain<CyberTruckAssembly, CyberTruckCar> = AssemblyChain(this::class.java.simpleName),
 ) : AssemblyLine<CyberTruckAssembly, CyberTruckCar> {

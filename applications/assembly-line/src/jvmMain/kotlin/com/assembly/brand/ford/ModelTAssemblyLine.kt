@@ -8,6 +8,11 @@ import com.assembly.line.AssemblyStation
 import com.assembly.log.getLogger
 import kotlin.random.Random
 
+/**
+ * Assembly line for the Ford Model T
+ *
+ * @param chain: chain of assembly operations
+ */
 class ModelTAssemblyLine(
 	private val chain: AssemblyChain<ModelTAssembly, ModelTCar> = AssemblyChain(this::class.java.simpleName),
 ) : AssemblyLine<ModelTAssembly, ModelTCar> {
@@ -51,11 +56,13 @@ class ModelTAssemblyLine(
 		return@AssemblyStation it
 	}
 
+	// produce a car from the assembly configuration
 	override suspend fun produce(assembly: ModelTAssembly): ModelTCar {
 		log.info(chain.toString().toColour(assembly.trackingColour))
 		return chain.process(assembly)
 	}
 
+	// expose the current AssemblyLine's chain to allow evolving it
 	override fun expose(handler: (AssemblyChain<ModelTAssembly, ModelTCar>) -> Unit) {
 		handler(this.chain)
 	}

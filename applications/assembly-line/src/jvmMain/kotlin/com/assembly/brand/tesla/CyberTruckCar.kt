@@ -3,6 +3,9 @@ package com.assembly.brand.tesla
 import com.assembly.console.colour.COLOUR
 import com.assembly.entity.Car
 
+/**
+ * A Tesla CyberTruck
+ */
 data class CyberTruckCar(
 	val assembly: CyberTruckAssembly,
 	val trackingColour: COLOUR,
