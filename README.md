@@ -8,8 +8,8 @@
                                                __/ |
                                QLINE 1.0.0    |___/ 
                                           
-                                          
-
+    Requirements: Gradle 7.0.2, JDK17
+    Open com.assembly.Demo.kt in IntelliJ and click Run
 
 
 
